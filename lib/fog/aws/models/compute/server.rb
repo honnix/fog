@@ -19,6 +19,7 @@ module Fog
         attribute :groups
         attribute :flavor_id,             :aliases => 'instanceType'
         attribute :image_id,              :aliases => 'imageId'
+        attribute :display_name,          :aliases => 'displayName'
         attr_accessor :instance_initiated_shutdown_behavior
         attribute :kernel_id,             :aliases => 'kernelId'
         attribute :key_name,              :aliases => 'keyName'
@@ -139,7 +140,7 @@ module Fog
 
         def save
           raise Fog::Errors::Error.new('Resaving an existing object may create a duplicate') if identity
-          requires :image_id
+          requires :image_id, :display_name
 
           options = {
             'BlockDeviceMapping'          => block_device_mapping,
@@ -169,7 +170,7 @@ module Fog
             options.delete('SubnetId')
           end
 
-          data = connection.run_instances(image_id, 1, 1, options)
+          data = connection.run_instances(image_id, display_name, 1, 1, options)
           merge_attributes(data.body['instancesSet'].first)
 
           if tags = self.tags

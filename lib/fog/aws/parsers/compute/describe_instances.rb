@@ -28,7 +28,7 @@ module Fog
               @instance[name] = value.to_i
             when 'availabilityZone', 'tenancy'
               @instance['placement'][name] = value
-            when 'architecture', 'clientToken', 'dnsName', 'imageId',
+            when 'architecture', 'clientToken', 'dnsName', 'imageId', 'displayName'
                   'instanceId', 'instanceType', 'ipAddress', 'kernelId',
                   'keyName', 'platform', 'privateDnsName', 'privateIpAddress', 'ramdiskId',
                   'reason', 'rootDeviceType',  'subnetId', 'vpcId'

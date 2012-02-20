@@ -9,6 +9,7 @@ module Fog
         #
         # ==== Parameters
         # * image_id<~String> - Id of machine image to load on instances
+        # * display_name<~String> - Display name of the instances
         # * min_count<~Integer> - Minimum number of instances to launch. If this
         #   exceeds the count of available instances, no instances will be
         #   launched.  Must be between 1 and maximum allowed for your account
@@ -86,7 +87,7 @@ module Fog
         #     * 'reservationId'<~String> - Id of reservation
         #
         # {Amazon API Reference}[http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RunInstances.html]
-        def run_instances(image_id, min_count, max_count, options = {})
+        def run_instances(image_id, display_name, min_count, max_count, options = {})
           if block_device_mapping = options.delete('BlockDeviceMapping')
             block_device_mapping.each_with_index do |mapping, index|
               for key, value in mapping
@@ -103,14 +104,17 @@ module Fog
 
           idempotent = !(options['ClientToken'].nil? || options['ClientToken'].empty?)
 
-          request({
+          params = { 
             'Action'    => 'RunInstances',
             'ImageId'   => image_id,
             'MinCount'  => min_count,
             'MaxCount'  => max_count,
             :idempotent => idempotent,
-            :parser     => Fog::Parsers::Compute::AWS::RunInstances.new
-          }.merge!(options))
+            :parser     => Fog::Parsers::Compute::AWS::RunInstances.new}
+          params['DisplayName'] = display_name if display_name != nil 
+          params.merge!(options)
+
+          request(params)
         end
 
       end
